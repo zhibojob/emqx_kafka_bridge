@@ -1,0 +1,10 @@
+{application, emqx_kafka_bridge,
+ [
+  {description, "A bridge transfer messages from emqx to kafka"},
+  {vsn, "1.1.2"},
+  {registered, [emqx_kafka_bridge_sup]},
+  {applications, [kernel,stdlib,brod]},
+  {mod, { emqx_kafka_bridge_app, []}},
+  {modules,[]},
+  {env, []}
+ ]}.

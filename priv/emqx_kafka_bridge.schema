@@ -1,0 +1,35 @@
+%%-*- mode: erlang -*-
+%% emqx_kafka_bridge config mapping
+{mapping, "hook.kafka.broker", "emqx_kafka_bridge.kafka", [
+  {default, {"localhost", 9092}},
+  {datatype, [integer, ip, string]}
+]}.
+
+{mapping, "hook.kafka.filter", "emqx_kafka_bridge.kafka", [
+  {default, "/_t/#"},
+  {datatype, string}
+]}.
+
+{mapping, "hook.kafka.topic", "emqx_kafka_bridge.kafka", [
+  {default, "emqx-message"},
+  {datatype, string}
+]}.
+
+
+{translation, "emqx_kafka_bridge.kafka", fun(Conf) ->
+  Broker =
+  case cuttlefish:conf_get("hook.kafka.broker", Conf) of
+    {Ip, Port} -> {Ip, Port};
+    S          -> case string:tokens(S, ":") of
+                    [Domain]       -> {Domain, 9092};
+                    [Domain, Port] -> {Domain, list_to_integer(Port)}
+                  end
+    end,
+  Filter = cuttlefish:conf_get("hook.kafka.filter", Conf),
+  Topic = cuttlefish:conf_get("hook.kafka.topic", Conf),
+  [
+   {broker, Broker}
+   ,{filter, Filter}
+   ,{topic, Topic}
+  ]
+end}.
